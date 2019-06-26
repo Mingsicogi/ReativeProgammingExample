@@ -1,10 +1,18 @@
-import java.util.*;
-import java.util.concurrent.Executor;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.Observable;
+import java.util.Observer;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+/**
+ * Iteratable과 Observable
+ * - pull 과 push
+ *
+ * @author minssogi
+ */
 @SuppressWarnings("deprecation")
-public class Main {
+public class Ob {
 
     public static void main(String[] args) {
         System.out.println("========= Reactive Programming 01 =========\n");
