@@ -20,20 +20,20 @@ public class RefactoringOperator {
 		Iterable<Integer> iter = Stream.iterate(1, i -> i + 1).limit(10).collect(Collectors.toList()); // 1 ~ MAX until limit value
 
 		Publisher<Integer> mapPub = mapPub(getPublisher(iter), num -> num * 10);
-		Publisher<Integer> mapPub2 = mapPub(mapPub, num -> num * 10);
+//		Publisher<Integer> mapPub2 = mapPub(mapPub, num -> num * -1);
 
-		mapPub2.subscribe(getLogSub());
+		mapPub.subscribe(getLogSub());
 	}
 
-	private static Publisher<Integer> mapPub(Publisher<Integer> publisher, Function<Integer, Integer> function) {
+	private static <T> Publisher<T> mapPub(Publisher<T> publisher, Function<T, T> function) {
 		return new Publisher<>() {
 			@Override
-			public void subscribe(Subscriber<? super Integer> subscriber) {
-				publisher.subscribe(new DelegateSubscriber(subscriber) {
+			public void subscribe(Subscriber<? super T> subscriber) {
+				publisher.subscribe(new DelegateSubscriber<>(subscriber) {
 
 					@Override
-					public void onNext(Integer item) {
-						super.onNext(function.apply(item));
+					public void onNext(T item) {
+						subscriber.onNext(function.apply(item));
 					}
 				});
 			}
@@ -45,7 +45,7 @@ public class RefactoringOperator {
 	 *
 	 * @return
 	 */
-	private static Subscriber<Integer> getLogSub() {
+	private static <T> Subscriber<T> getLogSub() {
 		return new Subscriber<>() {
 
 			@Override
@@ -55,7 +55,7 @@ public class RefactoringOperator {
 			}
 
 			@Override
-			public void onNext(Integer item) {
+			public void onNext(T item) {
 				System.out.println("# onNext : " + item);
 			}
 

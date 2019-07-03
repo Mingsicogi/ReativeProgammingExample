@@ -1,10 +1,10 @@
 import java.util.concurrent.Flow;
 
-public class DelegateSubscriber implements Flow.Subscriber<Integer> {
+public class DelegateSubscriber<T> implements Flow.Subscriber<T> {
 
 	Flow.Subscriber subscriber;
 
-	public DelegateSubscriber(Flow.Subscriber subscriber){
+	public DelegateSubscriber(Flow.Subscriber<? super T> subscriber){
 		this.subscriber = subscriber;
 	}
 
@@ -14,7 +14,7 @@ public class DelegateSubscriber implements Flow.Subscriber<Integer> {
 	}
 
 	@Override
-	public void onNext(Integer item) {
+	public void onNext(T item) {
 		subscriber.onNext(item);
 	}
 
