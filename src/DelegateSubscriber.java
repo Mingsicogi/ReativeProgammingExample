@@ -1,10 +1,10 @@
 import java.util.concurrent.Flow;
 
-public class DelegateSubscriber<T> implements Flow.Subscriber<T> {
+public class DelegateSubscriber<T, R> implements Flow.Subscriber<T> {
 
 	Flow.Subscriber subscriber;
 
-	public DelegateSubscriber(Flow.Subscriber<? super T> subscriber){
+	public DelegateSubscriber(Flow.Subscriber<? super R> subscriber){
 		this.subscriber = subscriber;
 	}
 

@@ -19,17 +19,17 @@ public class RefactoringOperator {
 
 		Iterable<Integer> iter = Stream.iterate(1, i -> i + 1).limit(10).collect(Collectors.toList()); // 1 ~ MAX until limit value
 
-		Publisher<Integer> mapPub = mapPub(getPublisher(iter), num -> num * 10);
+		Publisher<String> mapPub = mapPub(getPublisher(iter), num -> num + " number~");
 //		Publisher<Integer> mapPub2 = mapPub(mapPub, num -> num * -1);
 
 		mapPub.subscribe(getLogSub());
 	}
 
-	private static <T> Publisher<T> mapPub(Publisher<T> publisher, Function<T, T> function) {
+	private static <T, R> Publisher<R> mapPub(Publisher<T> publisher, Function<T, R> function) {
 		return new Publisher<>() {
 			@Override
-			public void subscribe(Subscriber<? super T> subscriber) {
-				publisher.subscribe(new DelegateSubscriber<>(subscriber) {
+			public void subscribe(Subscriber<? super R> subscriber) {
+				publisher.subscribe(new DelegateSubscriber<T, R>(subscriber) {
 
 					@Override
 					public void onNext(T item) {
