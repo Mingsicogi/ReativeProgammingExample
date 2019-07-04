@@ -1,3 +1,6 @@
+import java.util.Iterator;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -17,32 +20,53 @@ public class PubSub {
 
 		//java
 		Publisher publisher = getPublisher(Stream.iterate(1, i -> i + 1).limit(10).collect(Collectors.toList()));
-		publisher.subscribe(getSubscriber());
+
+		ExecutorService es = Executors.newSingleThreadExecutor();
+		es.execute(() -> publisher.subscribe(getSubscriber()));
 
 		System.out.println(Thread.currentThread().getName() + " : " + "End Test!");
 	}
 
+	private static Publisher getPub(Iterable<Integer> iterable){
+		return new Publisher() {
+			@Override
+			public void subscribe(Subscriber subscriber) {
+				subscriber.onSubscribe(new Subscription() {
+					Iterator<Integer> it = iterable.iterator();
+
+					@Override
+					public void request(long n) {
+						// n : 얼마만큼 보낼지 값
+						while (n-- > 0){
+							if(it.hasNext()){
+								subscriber.onNext(it.next());
+							} else {
+								subscriber.onComplete();
+								break;
+							}
+						}
+					}
+
+					@Override
+					public void cancel() {
+
+					}
+				});
+			}
+		};
+	}
+
 	private static Publisher getPublisher(Iterable<Integer> iterable) {
 		return (subscriber) -> subscriber.onSubscribe(new Subscription() {
-//			Iterator<Integer> it = iterable.iterator();
 
 			// call back 방식으로 결과를 수행하기 위함.
 			// back pressure : publisher 와 subscriber 사이에 속도 차를 조절하기 위한 기술.
 			@Override
 			public void request(long n) {
-				// n : 얼마만큼 보낼지 값
-//				while (n-- > 0){
-//					if(it.hasNext()){
-//						subscriber.onNext(it.next());
-//					} else {
-//						subscriber.onComplete();
-//						break;
-//					}
-//				}
 				try{
 					iterable.forEach(num -> subscriber.onNext(num));
 					subscriber.onComplete();
-					int i = 1/0;
+
 				} catch (Throwable e){
 					subscriber.onError(e);
 				}

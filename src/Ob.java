@@ -62,13 +62,24 @@ public class Ob {
             }
         }
 
-        Observer observer = (o, arg) -> System.out.println(Thread.currentThread().getName() + " : " + arg); // lambda
-//        Observer observer = new Observer() {
-//            @Override
-//            public void update(Observable o, Object arg) {
-//                System.out.println(arg);
-//            }
-//        };
+//      Observer observer = (o, arg) -> System.out.println(Thread.currentThread().getName() + " : " + arg); // lambda
+        Observer observer = new Observer() {
+            @Override
+            public void update(Observable o, Object arg) {
+
+                try{
+                    if(arg instanceof Integer && (Integer)arg == 8){
+                        int i = 1/0;
+                    }
+
+                } catch (ArithmeticException e){
+                    System.out.println(Thread.currentThread().getName() + ":" + "ERROR : " + e.getMessage());
+                }
+
+                System.out.println(Thread.currentThread().getName() + ":" + arg);
+
+            }
+        };
 
         IntegerObservable integerObservable = new IntegerObservable();
         integerObservable.addObserver(observer);
