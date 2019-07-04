@@ -7,7 +7,11 @@ public class FutureEx {
 	public static void main(String[] args) {
 		ExecutorService es = Executors.newCachedThreadPool();
 
-		Thread.sleep(2000);
+		try {
+			Thread.sleep(2000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 		System.out.println("Hello");
 
 		System.out.println("Exit");
