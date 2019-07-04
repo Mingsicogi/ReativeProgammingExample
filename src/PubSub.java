@@ -1,7 +1,3 @@
-
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.concurrent.Flow;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -17,9 +13,13 @@ public class PubSub {
 		// Publisher <- Observable
 		// Subscriber <- Observer
 
+		System.out.println(Thread.currentThread().getName() + " : " + "Start Test!");
+
 		//java
 		Publisher publisher = getPublisher(Stream.iterate(1, i -> i + 1).limit(10).collect(Collectors.toList()));
 		publisher.subscribe(getSubscriber());
+
+		System.out.println(Thread.currentThread().getName() + " : " + "End Test!");
 	}
 
 	private static Publisher getPublisher(Iterable<Integer> iterable) {
@@ -42,7 +42,7 @@ public class PubSub {
 				try{
 					iterable.forEach(num -> subscriber.onNext(num));
 					subscriber.onComplete();
-
+					int i = 1/0;
 				} catch (Throwable e){
 					subscriber.onError(e);
 				}
@@ -61,24 +61,24 @@ public class PubSub {
 
 			@Override
 			public void onSubscribe(Subscription subscription) {
-				System.out.println("onSubscribe");
+				System.out.println(Thread.currentThread() + ": " + "onSubscribe");
 				this.subscription = subscription;
 				subscription.request(Long.MAX_VALUE);
 			}
 
 			@Override
 			public void onNext(Integer item) { // Observer의 update와 같음.
-				System.out.println("onNext : " + item);
+				System.out.println(Thread.currentThread() + ": " + "onNext : " + item);
 			}
 
 			@Override
 			public void onError(Throwable throwable) { // 에러
-				System.out.println("onEroor : " + throwable.getMessage());
+				System.out.println(Thread.currentThread() + ": " +"onEroor : " + throwable.getMessage());
 			}
 
 			@Override
 			public void onComplete() { // 완료시, 데이터 전달이 끝났을때
-				System.out.println("onComplete");
+				System.out.println(Thread.currentThread() + ": " +"onComplete");
 			}
 		};
 	}
