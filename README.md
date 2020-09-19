@@ -1,4 +1,1 @@
 # ReativeProgammingExample
-* rx java
-
-
